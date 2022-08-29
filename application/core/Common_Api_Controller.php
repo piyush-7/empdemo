@@ -47,4 +47,29 @@ class Common_Api_Controller extends REST_Controller {
             http_response_code($this->api_response_arry['response_code']);
         }
     }
+
+    /**
+     * Retrieve the validation errors array and send as response.
+     * @return none
+     */
+    public function send_validation_errors($return_only = FALSE) {
+        $errors = $this->form_validation->error_array();
+        $return['response_code'] = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+        $return['error'] = $errors;
+        $return['service_name'] = '';
+        $return['message'] = '';
+        $return['global_error'] = '';
+        $return['data'] = '';
+
+        if (!$this->input->post()) {
+            $return['global_error'] = $this->lang->line('input_invalid_format');
+        }
+
+        if ($return_only === TRUE) {
+            return $return;
+        }
+
+        $this->response($return, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
 }

@@ -55,3 +55,4 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 // api route
+// $route['employee_register'] = "Emp_register/emp_regi";
