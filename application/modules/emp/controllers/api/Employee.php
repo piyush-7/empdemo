@@ -14,8 +14,8 @@ class Employee extends Common_Api_Controller{
 
     
     // $this->emp = $this->load->database('tbl_emp',TRUE);
-    $this->load->model(array("api/Emp_model"));
-    $this->load->library(array("form_validation"));
+    $this->load->model(array('api/Emp_model'));
+    $this->load->library(array('form_validation'));
     $this->load->helper(array('security','form','url'));
   }
 
@@ -68,7 +68,7 @@ class Employee extends Common_Api_Controller{
           $emp = array(
             "emp_name" => $emp_name,
             "emp_email" => $emp_email,
-            "emp_password" => $emp_password,
+            "emp_password" =>password_hash($emp_password,PASSWORD_BCRYPT),
             "emp_add" => $emp_add,
             "emp_mobile" => $emp_mobile,
             "emp_gender" => $emp_gender,
@@ -131,6 +131,21 @@ class Employee extends Common_Api_Controller{
       ), REST_Controller::HTTP_NOT_FOUND);
     }
   }
+
+  // public function index_get($emp_id) //specific id
+  // {
+  //   $emp = new Emp_model;
+  //   $result = $emp->find_employee($emp_id);
+    
+  //   if($this->response($result)){
+  //       $this->response(['message'=>'Employee find']);
+  //   }
+
+  //   else{
+  //     $this->response(['message'=>'Employee not find']);
+
+  //   }
+  // }
 
 
   public function index_delete()
@@ -315,12 +330,50 @@ class Employee extends Common_Api_Controller{
 
   public function index_put() //working with non validation
   {
-    $data = json_decode(file_get_contents("php://input"));
 
-    if(isset($data->emp_id) && isset($data->emp_name) && isset($data->emp_email) && isset($data->emp_password) && isset($data->emp_add) && isset($data->emp_mobile)&& isset($data->emp_gender)&& isset($data->emp_dob)&& isset($data->emp_pancard)&& isset($data->emp_joining)&& isset($data->emp_salary)&& isset($data->depart_id)&& isset($data->desi_id)){
+     
+    // $emp_name = $this->security->xss_clean($this->input->post("emp_name"));
+    // $emp_email = $this->security->xss_clean($this->input->post("emp_email"));
+    // $emp_password = $this->security->xss_clean($this->input->post("emp_password"));
+    // $emp_add = $this->security->xss_clean($this->input->post("emp_add"));
+    // $emp_mobile = $this->security->xss_clean($this->input->post("emp_mobile"));
+    // $emp_gender = $this->security->xss_clean($this->input->post("emp_gender"));
+    // $emp_dob = $this->security->xss_clean($this->input->post("emp_dob"));
+    // $emp_pancard = $this->security->xss_clean($this->input->post("emp_pancard"));
+    // $emp_joining = $this->security->xss_clean($this->input->post("emp_joining"));
+    // $emp_salary = $this->security->xss_clean($this->input->post("emp_salary"));
+    // $depart_id = $this->security->xss_clean($this->input->post("depart_id"));
+    // $desi_id = $this->security->xss_clean($this->input->post("desi_id"));
+    // $manager_id = $this->security->xss_clean($this->input->post("manager_id"));
 
-      $employee_id = $data->emp_id;
-      $emp_info = array(
+     //form validation
+    //  $this->form_validation->set_rules("emp_name", "Name", "required|min_length[4]|alpha");
+    //  $this->form_validation->set_rules("emp_email", "Email", "required|valid_email|valid_emails|is_unique[tbl_employee.emp_email]");
+    //  $this->form_validation->set_rules("emp_password", "Password", "required");
+    //  $this->form_validation->set_rules("emp_add", "Address", "required");
+    //  $this->form_validation->set_rules("emp_mobile", "Mobile", "required|exact_length[10]");
+    //  $this->form_validation->set_rules("emp_gender", "Gender", "required");
+    //  $this->form_validation->set_rules("emp_dob", "emp_dob", "required");
+    //  $this->form_validation->set_rules("emp_pancard", "Pancard", "required|exact_length[10]");
+    //  $this->form_validation->set_rules("emp_joining", "Date", "required");
+    //  $this->form_validation->set_rules("emp_salary", "Salary", "required");
+    //  $this->form_validation->set_rules("desi_id", "Desi_id", "required");
+    //  $this->form_validation->set_rules("depart_id", "Depart_id", "required");
+    //  $this->form_validation->set_rules("manager_id", "Manager_id", "required");
+
+      
+    //  if($this->form_validation->run() == FALSE) 
+    //   {
+    //       $this->send_validation_errors();
+
+    //   }
+
+        $data = json_decode(file_get_contents("php://input"));
+
+        if(isset($data->emp_id) && isset($data->emp_name) && isset($data->emp_email) && isset($data->emp_password) && isset($data->emp_add) && isset($data->emp_mobile)&& isset($data->emp_gender)&& isset($data->emp_dob)&& isset($data->emp_pancard)&& isset($data->emp_joining)&& isset($data->emp_salary)&& isset($data->depart_id) && isset($data->desi_id) && isset($data->desi_id) && isset($data->manager_id)){
+
+        $employee_id = $data->emp_id;
+        $emp_info = array(
         "emp_name" => $data->emp_name,
         "emp_email" => $data->emp_email,
         "emp_password" => $data->emp_password,
@@ -332,29 +385,35 @@ class Employee extends Common_Api_Controller{
         "emp_salary" => $data->emp_salary,
         "depart_id" => $data->depart_id,
         "desi_id" => $data->desi_id,
+        "manager_id" => $data->manager_id,
         
       );
 
-      if($this->Emp_model->update_employee_information($employee_id, $emp_info)){
+          if($this->Emp_model->update_employee_information($employee_id, $emp_info)){
+
+              $this->response(array(
+                "status" => 1,
+                "message" => "Employee Has been updated"
+              ), REST_Controller::HTTP_OK);
+          }
+          else
+          {
+
+            $this->response(array(
+              "status" => 0,
+              "messsage" => "Failed to update Employee data"
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+          }
+        }
+        else
+        {
 
           $this->response(array(
-            "status" => 1,
-            "message" => "Employee Has been updated"
-          ), REST_Controller::HTTP_OK);
-      }else{
-
-        $this->response(array(
-          "status" => 0,
-          "messsage" => "Failed to update Employee data"
-        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-      }
-    }else{
-
-      $this->response(array(
-        "status" => 0,
-        "message" => "All fields are needed"
-      ), REST_Controller::HTTP_NOT_FOUND);
-    }
+            "status" => 0,
+            "message" => "All fields are needed"
+          ), REST_Controller::HTTP_NOT_FOUND);
+        }
+    
   }
 
   

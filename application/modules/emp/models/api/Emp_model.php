@@ -34,12 +34,27 @@ class Emp_model extends CI_Model{
  public function get_employee()
 
  {
-     $this->db->select("*");
+     $this->db->select("tbl_employee.emp_id,tbl_employee.emp_name,tbl_employee.emp_email,tbl_employee.emp_add,tbl_employee.emp_mobile,tbl_employee.emp_gender,tbl_employee.emp_dob,tbl_employee.emp_pancard,tbl_employee.emp_joining,tbl_employee.emp_salary,tbl_department.depart_name,tbl_designaion.desi_name");
+
      $this->db->from("tbl_employee");
+
+     $this->db->join('tbl_department', 'tbl_employee.emp_id = tbl_department.emp_id');
+     $this->db->join('tbl_designaion', 'tbl_employee.emp_id = tbl_designaion.emp_id');
 
      $query = $this->db->get();
 
      return $query->result();
+ }
+
+ public function find_employee($emp_id)
+ {
+   
+   $this->db->where('emp_id', $emp_id);
+   
+   $query = $this->db->get('tbl_employee');
+   return $query->row();
+   
+   
  }
 
 
@@ -83,10 +98,11 @@ class Emp_model extends CI_Model{
 
  public function get_manager()
  {
-    $this->db->select('e.emp_id as Employee ID,e.emp_name as Name,IFNULL(m.emp_name,"No Manager") as Manager');
+    $this->db->select('e.emp_id as Employee ID,e.emp_name as Name,IFNULL(m.emp_name,"No Manager") as Manager,tbl_leave.leave_reason');
     
     $this->db->from('tbl_employee as e');
     $this->db->join('tbl_employee as m', 'e.manager_id = m.emp_id','left');
+    $this->db->join('tbl_leave', 'e.emp_id = tbl_leave.emp_id','left');
     $query=$this->db->get();
 
     return $query->result();
