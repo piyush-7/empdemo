@@ -20,7 +20,7 @@ class Emp_model extends CI_Model{
   }
 
 
-  public function emp_delete($emp_id)  //employee delete
+  public function emp_delete($emp_id) //employee delete
   {
     
     $this->db->where('emp_id', $emp_id);
@@ -31,7 +31,7 @@ class Emp_model extends CI_Model{
   }
 
 
- public function get_employee()  //all employee
+ public function get_employee() //all employee
 
  {
      $this->db->select("tbl_employee.emp_id,tbl_employee.emp_name,tbl_employee.emp_email,tbl_employee.emp_add,tbl_employee.emp_mobile,tbl_employee.emp_gender,tbl_employee.emp_dob,tbl_employee.emp_pancard,tbl_employee.emp_joining,tbl_employee.emp_salary,tbl_department.depart_name,tbl_designaion.desi_name");
@@ -46,23 +46,22 @@ class Emp_model extends CI_Model{
      return $query->result();
  }
 
-//  public function find_employee($emp_id) //employee find specific id
-//  {
+ public function find_employee($emp_id) //employee find specific id
+ {
+   
+    $this->db->select("tbl_employee.emp_id,tbl_employee.emp_name,tbl_employee.emp_email,tbl_employee.emp_add,tbl_employee.emp_mobile,tbl_employee.emp_gender,tbl_employee.emp_dob,tbl_employee.emp_pancard,tbl_employee.emp_joining,tbl_employee.emp_salary,tbl_department.depart_name,tbl_designaion.desi_name");
+
+    $this->db->from("tbl_employee");
+
+    $this->db->join('tbl_department', 'tbl_employee.emp_id = tbl_department.emp_id');
+    $this->db->join('tbl_designaion', 'tbl_employee.emp_id = tbl_designaion.emp_id');
+   $this->db->get_where('emp_id', $emp_id);
+   
+   $query = $this->db->get();
+   return $query->row();
    
    
-//             $this->db->select('*');
-            
-//             $this->db->from('tbl_employee');
-            
-//             $this->db->where('emp_id', $emp_id);
-
-           
-//             $query = $this->db->get();
-
-//             return $query->row();
-
-   
-//  }
+ }
 
 
  public function leave_insert($data=array()) //leave request insert
@@ -105,7 +104,7 @@ class Emp_model extends CI_Model{
 
  public function get_manager() //employee get manager with leave status
  {
-    $this->db->select('e.emp_id as Employee ID,e.emp_name as Name,IFNULL(m.emp_name,"No Manager") as Manager,e.manager_id,tbl_leave.leave_reason');
+    $this->db->select('e.emp_id as Employee ID,e.emp_name as Name,IFNULL(m.emp_name,"No Manager") as Manager,tbl_leave.leave_reason');
     
     $this->db->from('tbl_employee as e');
     $this->db->join('tbl_employee as m', 'e.manager_id = m.emp_id','left');
@@ -160,14 +159,14 @@ class Emp_model extends CI_Model{
                 return $query->result();
         }
 
-        public function update_employee_information($emp_id, $data) //working 
+        public function update_employee_information($emp_id, $data) //working with not validation
         {
         
             $this->db->where("emp_id", $emp_id);
             return $this->db->update("tbl_employee", $data);
         }
 
-        public function update_item($emp_id,$data=array()) //Normal Method
+        public function update_item($emp_id,$data=array()) // update Normal Method
         {
             $data=array(
             'emp_name' => $this->input->put('emp_name'),
@@ -225,10 +224,10 @@ class Emp_model extends CI_Model{
 
             $this->db->where("leave_id", $leave_id);
             return $this->db->update("tbl_leave", $status);
-        }
+         }
 
 
-       
+
         public function emp_dep_map($data=array()) //employee department update/insert
         {
          return  $this->db->insert("tbl_department",$data);
@@ -271,65 +270,20 @@ class Emp_model extends CI_Model{
             return $query->result();
         }
 
-        
-        // public function emp_get($emp_id = "")
-        // {
-        //     if(!empty($emp_id))
-        //      {
-        //         $query = $this->db->get_where('tbl_employee',array('emp_id'=>$emp_id));
-
-        //         return $query->row_array();
-        //      }
-
-        //      else
-        //       {
-        //         $query = $this->db->get('tbl_employee');
-
-        //         return $query->result_array();
-        //       }
-        // }
-
-        // public function edit_emp($emp_id) //specific record find
-        // {
-            
-        //    $this->db->where('emp_id', $emp_id);
-
-        //    $q= $this->db->get('tbl_employee');
-        //    return $q->row();
-
-            
-        // }
-
-
-        public function edit_emp($emp_id) //specific record find
+        public function emp_find($emp_id = "")
         {
-             $this->db->select("tbl_employee.emp_id,tbl_employee.emp_name,tbl_employee.emp_email,tbl_employee.emp_add,tbl_employee.emp_mobile,tbl_employee.emp_gender,tbl_employee.emp_dob,tbl_employee.emp_pancard,tbl_employee.emp_joining,tbl_employee.emp_salary,tbl_department.depart_name,tbl_designaion.desi_name");
+            if(!empty($emp_id))
+             {
+                $query = $this->db->get_where('tbl_employee',array('emp_id'=>$emp_id));
 
-             $this->db->from("tbl_employee");
+                return $query->row_array();
+             }
 
-             $this->db->where('tbl_employee.emp_id', $emp_id);
+             else
+              {
+                $query = $this->db->get('tbl_employee');
 
-             $this->db->join('tbl_department', 'tbl_employee.emp_id = tbl_department.emp_id');
-             $this->db->join('tbl_designaion', 'tbl_employee.emp_id = tbl_designaion.emp_id');
-
-            
-            $q= $this->db->get();
-            return $q->row();
-
-        }
-
-        public function emp_leave_manager_byid($emp_id)
-        {
-            $this->db->select('e.emp_id as Employee ID,e.emp_name as Name,IFNULL(m.emp_name,"No Manager") as Manager,e.manager_id,tbl_leave.leave_reason');
-    
-            $this->db->from('tbl_employee as e');
-
-            $this->db->where('m.emp_id', $emp_id);
-
-            $this->db->join('tbl_employee as m', 'e.manager_id = m.emp_id','left');
-            $this->db->join('tbl_leave', 'e.emp_id = tbl_leave.emp_id','left');
-            $query=$this->db->get();
-        
-            return $query->result();
+                return $query->result_array();
+              }
         }
 }

@@ -2,10 +2,8 @@
 
 require APPPATH.'libraries/REST_Controller.php';
 
-
-class Show_manager extends Common_Api_Controller {
-
- 
+class Emp_leave_find  extends Common_Api_Controller
+{
     public function __construct()
     {
         parent::__construct();
@@ -17,32 +15,23 @@ class Show_manager extends Common_Api_Controller {
 
     public function index_get()
     {
-      $find_manager = $this->Emp_model->get_manager();
+      $emp_leave = $this->Emp_model->emp_leave_find();
   
-      if(count($find_manager)>0){
+      if(count($emp_leave)>0){
   
         $this->response(array(
           "status" => 1,
-          "message" => "Employee-Manager found",
-          "data" => $find_manager
+          "message" => "Employee-Leave found",
+          "data" => $emp_leave
         ), REST_Controller::HTTP_OK);
       }else{
   
         $this->response(array(
           "status" => 0,
-          "message" => "No Employee-Manager found",
-          "data" => $find_manager
+          "message" => "No Employee-Leave found",
+          "data" => $emp_leave
         ), REST_Controller::HTTP_NOT_FOUND);
       }
     }
-
-    public function emp_manager_byid_get($emp_id) //specific record find
-    {
-      $emp = new emp_model;
-      $result = $emp->emp_leave_manager_byid($emp_id);
-
-      $this->response($result,200);
-    }
-  
 
 }

@@ -21,7 +21,7 @@ class Employee extends Common_Api_Controller{
 
 
  
-  public function index_post()
+  public function index_post() //employee insert
   {
     
     
@@ -111,7 +111,7 @@ class Employee extends Common_Api_Controller{
   }
 
 
-  public function index_get()
+  public function index_get() //all employee find
   {
     $employee = $this->Emp_model->get_employee();
 
@@ -132,23 +132,30 @@ class Employee extends Common_Api_Controller{
     }
   }
 
-  // public function index_get($emp_id) //specific id
+  // public function emp_get($emp_id) //employee find specific id
   // {
-  //   $emp = new Emp_model;
-  //   $result = $emp->find_employee($emp_id);
+  //   // $emp = new Emp_model;
+  //   $result = $this->Emp_model->find_employee($emp_id);
     
-  //   if($this->response($result)){
-  //       $this->response(['message'=>'Employee find']);
-  //   }
+  //   if(count($result)>0){
 
-  //   else{
-  //     $this->response(['message'=>'Employee not find']);
+  //     $this->response(array(
+  //       "status" => 1,
+  //       "message" => "Employee found",
+  //       "data" => $result
+  //     ), REST_Controller::HTTP_OK);
+  //   }else{
 
+  //     $this->response(array(
+  //       "status" => 0,
+  //       "message" => "No Employee found",
+  //       "data" => $result
+  //     ), REST_Controller::HTTP_NOT_FOUND);
   //   }
   // }
 
 
-  public function index_delete()
+  public function index_delete() 
   {
       $data = json_decode(file_get_contents("php://input"));
 
@@ -177,7 +184,7 @@ class Employee extends Common_Api_Controller{
 
 
 
-  // public function index_put($data) //Normal method
+  // public function emp_put($data) //Normal method
   // {
 
     
@@ -328,7 +335,7 @@ class Employee extends Common_Api_Controller{
   // }
 
 
-  public function index_put() //working with non validation
+  public function index_put() //working 
   {
 
      
@@ -417,7 +424,7 @@ class Employee extends Common_Api_Controller{
   }
 
   
-    // public function index_put($emp_id) //update third method
+    // public function emp_update_put($emp_id) //update third method
     // {
     //   $emp = new Emp_model;
     //   $data =array(
@@ -456,5 +463,38 @@ class Employee extends Common_Api_Controller{
     // }
 
 
+
+    // public function emp_find_get($emp_id = 0) //emp_find method
+    // {
+    //   $emp = new Emp_model;
+    //   $emp = $this->Emp_model->emp_find->getRows($emp_id);
+
+    //     if(!empty($emp))
+    //       {
+    //         $this->response(array(
+    //           "status" => 1,
+    //           "message" => "Employee found",
+    //           "data" => $emp
+    //         ), REST_Controller::HTTP_OK);
+    //       }
+    //       else
+    //        {
+    //         $this->response(array(
+    //           "status" => 0,
+    //           "message" => "No Employee found",
+    //           "data" => $emp
+    //         ), REST_Controller::HTTP_NOT_FOUND);
+    //        }
+
+    // }
+
+    public function emp_find_get($emp_id) //specific record find
+    {
+      $emp = new emp_model;
+      $result = $emp->edit_emp($emp_id);
+
+      $this->response($result,200);
+    }
+    
 
 }
